@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>3d Shapes with Point Light</title>
+    <title>3d Shapes With Light</title>
     
 </head>
 <body>
+    <h1>Cube and Sphere with Materials, Texture, and Point light</h1>
+    <h2>
+      Nama : Yusuf Anfasya
+    </h2>
+    <h2>
+      NRP : 05111940000077
+    </h2>
     <canvas id="c" width="1024" height="768 "></canvas>
 </body>
 </html>
@@ -16,19 +23,19 @@ function main() {
   const canvas = document.querySelector('#c');
   const renderer = new THREE.WebGLRenderer({canvas});
 
-  const fov = 100;
+  const fov = 120;
   const aspect = 2;  // the canvas default
   const near = 1;
   const far = 5;
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-  camera.position.z = 3;
+  camera.position.z = 2;
 
   const scene = new THREE.Scene();
 
   {
     const light = new THREE.PointLight( 0xffffff, 1, 100 );
-  	light.position.set( 0, 0, 0 );
-  	scene.add( light )
+	light.position.set( 0, 0, 0 );
+	scene.add( light )
   }
 
   var rockTexture = new THREE.TextureLoader().load('rock.jpg');
@@ -38,14 +45,8 @@ function main() {
   const boxDepth = 1;
   const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
 
-
-  const geometry2 = new THREE.CylinderGeometry(0.8,0.8,0.5,64);
-  
   const geometry3 = new THREE.SphereGeometry();
-  const material3 = new THREE.MeshBasicMaterial( { color: 0xffff00, wireframe : true } );
-  const sphere = new THREE.Mesh( geometry3, material3 );
-  sphere.position.y = -1.4;
-  scene.add( sphere );
+  
 
 
   function makeInstance(geometry, color, x) {
@@ -65,6 +66,7 @@ function main() {
   function makeInstance2(geometry, color, x,tf) {
     const material = new THREE.MeshPhongMaterial(
       {color,
+        wireframe : false
       });
 
     const cube = new THREE.Mesh(geometry, material);
@@ -75,10 +77,26 @@ function main() {
     return cube;
   }
 
+  function makeInstance3(geometry, color, x,wr) {
+    const material = new THREE.MeshPhongMaterial(
+      {color,
+        wireframe : wr
+      });
+
+    const sphere = new THREE.Mesh( geometry, material );
+
+    scene.add( sphere );
+
+    sphere.position.y = x;
+
+    return sphere;
+  }
+
   const cubes = [
     
-    makeInstance(geometry2, 0x44ab9eb8, -2),
+    makeInstance(geometry, 0x44ab9eb8, -2),
     makeInstance2(geometry, 0xaa8844,  2,false),
+    makeInstance3(geometry3,0x0affff, -2 ,true)
   ];
 
   function render(time) {
@@ -91,9 +109,7 @@ function main() {
       cube.rotation.y = rot;
     });
 
-    sphere.rotation.x += 0.001;
-    sphere.rotation.y += 0.01;
-    
+  
 
     renderer.render(scene, camera);
 
