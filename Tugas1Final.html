@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Document</title>
+    
+</head>
+<body>
+    <canvas id="c" width="1024" height="768 "></canvas>
+</body>
+</html>
+
+
+<script type="module">    
+import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';  
+function main() {
+  const canvas = document.querySelector('#c');
+  const renderer = new THREE.WebGLRenderer({canvas});
+
+  const fov = 120;
+  const aspect = 2;  // the canvas default
+  const near = 1;
+  const far = 5;
+  const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+  camera.position.z = 2;
+
+  const scene = new THREE.Scene();
+
+  {
+    const color = 0xFFFFFF;
+    const intensity = 1;
+    let Light = new THREE.AmbientLight();
+    const light = new THREE.DirectionalLight(color, intensity);
+    light.position.set(-1, 0, 4);
+    scene.add(light);
+  }
+
+  var rockTexture = new THREE.TextureLoader().load('rock.jpg');
+
+  const boxWidth = 1;
+  const boxHeight = 1;
+  const boxDepth = 1;
+  const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+
+  const geometry3 = new THREE.SphereGeometry();
+  const material3 = new THREE.MeshBasicMaterial( { color: 0xffff00, wireframe : true } );
+  const sphere = new THREE.Mesh( geometry3, material3 );
+  sphere.position.y = -1;
+  scene.add( sphere );
+
+
+  function makeInstance(geometry, color, x) {
+    const material = new THREE.MeshBasicMaterial(
+      {color,
+        map:rockTexture
+      });
+
+    const cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
+
+    cube.position.x = x;
+
+    return cube;
+  }
+
+  function makeInstance2(geometry, color, x,tf) {
+    const material = new THREE.MeshPhongMaterial(
+      {color,
+      });
+
+    const cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
+
+    cube.position.x = x;
+
+    return cube;
+  }
+
+  const cubes = [
+    
+    makeInstance(geometry, 0x44ab9eb8, -2),
+    makeInstance2(geometry, 0xaa8844,  2,false),
+  ];
+
+  function render(time) {
+    time *= 0.001;  // convert time to seconds
+
+    cubes.forEach((cube, ndx) => {
+      const speed = 1 + ndx * .1;
+      const rot = time * speed;
+      cube.rotation.x = rot;
+      cube.rotation.y = rot;
+    });
+
+    sphere.rotation.x += 0.001;
+    sphere.rotation.y += 0.01;
+    
+
+    renderer.render(scene, camera);
+
+    requestAnimationFrame(render);
+  }
+  requestAnimationFrame(render);
+
+}
+
+main(); 
+
+</script>
+
+    
+    
